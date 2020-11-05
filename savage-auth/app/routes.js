@@ -7,10 +7,8 @@ module.exports = function(app, passport, db) {
         res.render('index.ejs');
     });
 
-
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
-      console.log(req)
         db.collection('messages').find().toArray((err, result) => {
           if (err) return console.log(err)
           res.render('profile.ejs', {
@@ -20,23 +18,21 @@ module.exports = function(app, passport, db) {
         })
     });
 
+    // MAIN TEST ROUTE
+    app.get('/api/messages', function(req, res) {
+      db.collection('messages').find().toArray((err, result) => {
+        if (err) return console.log(err)
+        res.json(result)
+      })
+    });
+
     // LOGOUT ==============================
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
     });
 
-// react routes ================================================================
-
-  // MAIN TEST ROUTE
-  app.get('/api/messages', function(req, res) {
-    db.collection('messages').find().toArray((err, result) => {
-      if (err) return console.log(err)
-      res.json(result)
-    })
-  });
-
-// message board routes ========================================================
+// message board routes ===============================================================
 
     app.post('/messages', (req, res) => {
       db.collection('messages').save({name: req.body.name, msg: req.body.msg, thumbUp: 0, thumbDown:0}, (err, result) => {
